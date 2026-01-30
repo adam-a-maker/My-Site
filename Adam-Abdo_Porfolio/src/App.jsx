@@ -90,7 +90,7 @@ export default function App() {
     { id: 1, text: "INITIALIZING ADAM_OS v1.2.0...", type: "info" },
     { id: 2, text: "FETCHING LIVE GITHUB REPOS... [OK]", type: "success" },
     { id: 3, text: "SYNCING ROBOTICS_MODULES... [OK]", type: "info" },
-    { id: 4, text: "SYSTEM SECURE. WELCOME OPERATOR. TRY help", type: "warn" },
+    { id: 4, text: "SYSTEM SECURE. WELCOME OPERATOR. try help", type: "warn" },
   ]);
   const [input, setInput] = useState("");
   const [uptime, setUptime] = useState(0);
@@ -131,13 +131,11 @@ export default function App() {
       const responses = {
         'help': "CMDS: about, hardware, experience, repos, contact, clear, secret",
         'about': "ADAM ABDO: @Lycéen Noisy le Grand. Robocup Junior 2024 top 11. Tech hardware and software enthusiast.",
-        'hardware': "INVENTORY: ESP32, RPi 3b, Arduino, LiDAR. Currently building Robocup 2026 vision assisted Bot.",
+        'hardware': "INVENTORY: ESP32, RPi 3b, Arduino, Love . Currently building Robocup 2026 vision assisted Bot.",
         'experience': "INTERN at Cité des Sciences. PIX Cert: 500+. CS50 Harvard in progress.",
         'repos': `FETCHED ${repos.length} ACTIVE REPOSITORIES FROM GITHUB.`,
         'contact': "MAIL: dam.abd000@gmail.com | GITHUB: adam-a-maker",
         'secret': "SYSTEM_KEY: {R0B0CUP_2024_TOP-11}. Keep exploring.",
-        'interest': "FAVORITE_LANGUAGES: Python, C++. Enjoys embedded systems and 3D modeling.",
-        'internships': "Searching an intership in a tech/robotics/ai field, you can check my CV.",
         'clear': 'CLEAR'
       };
 
@@ -317,7 +315,7 @@ export default function App() {
               <FileText size={14}/> DOWNLOAD_CV
             </button>
             <a 
-              href="https://github.com/adam-a-maker?tab=repositories"
+              href="https://github.com/adam-a-maker"
               target="_blank"
               className="flex items-center justify-center gap-2 border border-[#1f521f] py-3 hover:bg-[#33ff00] hover:text-[#0a0a0a] transition-all text-xs font-bold"
             >
