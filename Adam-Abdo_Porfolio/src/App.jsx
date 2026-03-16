@@ -85,17 +85,37 @@ const ProgressBar = ({ label, value, max = 100, color = COLORS.primary }) => {
   );
 };
 
+const TypewriterText = ({ text, speed = 30 }) => {
+  const [displayedText, setDisplayedText] = useState('');
+  
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      if (i < text.length) {
+        setDisplayedText(text.slice(0, i + 1));
+        i++;
+      } else {
+        clearInterval(timer);
+      }
+    }, speed);
+    return () => clearInterval(timer);
+  }, [text, speed]);
+  
+  return <span style={{ whiteSpace: 'pre-wrap' }}>{displayedText}</span>;
+};
+
 export default function App() {
   const [logs, setLogs] = useState([
     { id: 1, text: "INITIALIZING ADAM_OS v1.2.0...", type: "info" },
     { id: 2, text: "FETCHING LIVE GITHUB REPOS... [OK]", type: "success" },
-    { id: 3, text: "SYNCING ROBOTICS_MODULES... [OK]", type: "info" },
-    { id: 4, text: "SYSTEM SECURE. WELCOME OPERATOR. try help", type: "warn" },
+    { id: 3, text: "SYNCING MODULES... [OK]", type: "info" },
+    { id: 4, text: "SYSTEM SECURE. WELCOME OPERATOR. TRY 'help'", type: "warn" },
   ]);
   const [input, setInput] = useState("");
   const [uptime, setUptime] = useState(0);
   const [repos, setRepos] = useState([]);
   const [loadingRepos, setLoadingRepos] = useState(true);
+  const [userIP, setUserIP] = useState('DETECTING...');
   const logEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -121,6 +141,14 @@ export default function App() {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
 
+  // Fetch user IP
+  useEffect(() => {
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => setUserIP(data.ip))
+      .catch(() => setUserIP('UNKNOWN'));
+  }, []);
+
   const handleCommand = (e) => {
     if (e.key === 'Enter') {
       const cmd = input.trim().toLowerCase();
@@ -129,13 +157,13 @@ export default function App() {
       setLogs(prev => [...prev, { id: Date.now(), text: `adam@terminal:~$ ${cmd}`, type: "cmd" }]);
       
       const responses = {
-        'help': "CMDS: about, hardware, experience, repos, contact, clear, secret",
-        'about': "ADAM ABDO: @Lycéen Noisy le Grand. Robocup Junior 2024 top 11. Tech hardware and software enthusiast.",
-        'hardware': "INVENTORY: ESP32, RPi 3b, Arduino, Love . Currently building Robocup 2026 vision assisted Bot.",
-        'experience': "INTERN at Cité des Sciences. PIX Cert: 500+. CS50 Harvard in progress.",
+        'help': "CMDS: about, hardware, experience, repos, contact, clear, + a secret one if you find it ;)",
+        'about': "ADAM ABDO:\n @Lycéen au lycée internationnal de Noisy le Grand.\n Tech hardware and software enthusiast.\n Passionate about robotics, embedded systems, AI and challenges.",
+        'hardware': "I am familiar and using: ESP32, RPi 3b, Arduino.\n I made a homelab server for home assistant.\n I also love desasembling thing to understand them better.\n Currently building Robocup 2026 vision assisted Robot.",
+        'experience': "I was an INTERN at Cité des Sciences in Paris.\n I have a PIX Certification with 500+ points.\n I participated at the Robocup Junior 2024 and made a top 11 for our first year.\n Currently enrolled in CS50 Harvard.",
         'repos': `FETCHED ${repos.length} ACTIVE REPOSITORIES FROM GITHUB.`,
         'contact': "MAIL: dam.abd000@gmail.com | GITHUB: adam-a-maker",
-        'secret': "SYSTEM_KEY: {R0B0CUP_2024_TOP-11}. Keep exploring.",
+        'secret': "SYSTEM_KEY: {R0B0CUP_2026}. YOU_FOUND_THE_SECRET_COMMAND! CONGRATS! THIS_KEY_IS_USELESS_BUT_YOU_CAN_PRETEND_IT_OPENS_A_SECRET_SECTION_OF_MY_PORTFOLIO. THANKS_FOR_CHECKING_IT_OUT!",
         'clear': 'CLEAR'
       };
 
@@ -185,7 +213,7 @@ export default function App() {
             SESSION_TIME: {Math.floor(uptime/60)}m {uptime%60}s
           </span>
           <span className="border border-[#1f521f] px-2 py-0.5 text-[#ffb000]">
-            IP: 192.168.1.104
+            IP: {userIP}
           </span>
         </div>
       </header>
@@ -197,14 +225,15 @@ export default function App() {
           <TerminalWindow title="CORE_COMPETENCIES">
             <ProgressBar label="PYTHON_DEV" value={92} />
             <ProgressBar label="C++_EMBEDDED" value={88} color={COLORS.secondary} />
-            <ProgressBar label="3D_MODELING" value={75} />
-            <ProgressBar label="LINUX_EXPERIENCE" value={82} />
+            <ProgressBar label="LINUX_EXPERIENCE" value={60} />
+            <ProgressBar label="3D_MODELING" value={57} />
             
             <div className="mt-4 space-y-2 border-t border-[#1f521f] pt-4 text-xs">
-              <div className="flex items-center gap-2"><Cpu size={14}/> <span>ROBOCUP_2024_CHAMPION</span></div>
+              <div className="flex items-center gap-2"><Cpu size={14}/> <span>ROBOCUP_2024_FINISHER</span></div>
+              <div className="flex items-center gap-2"><Cpu size={14}/> <span>ROBOCUP_2026_CONTENDER</span></div>
               <div className="flex items-center gap-2 text-[#ffb000]"><Box size={14}/> <span>BLENDER & FUSION360</span></div>
               <div className="flex items-center gap-2"><Code2 size={14}/> <span>CS50_HARVARD_2025</span></div>
-              <div className="flex items-center gap-2 text-[#33ff00]"><ShieldCheck size={14}/> <span>CTF_102ND_RANK</span></div>
+              <div className="flex items-center gap-2 text-[#33ff00]"><ShieldCheck size={14}/> <span>CTF_IDF_2025_102ND_RANK</span></div>
             </div>
           </TerminalWindow>
 
@@ -262,7 +291,11 @@ export default function App() {
                     {log.type === 'success' && <span className="text-[#33ff00] mr-1">[OK]</span>}
                     {log.type === 'warn' && <span className="text-[#ffb000] mr-1">[!]</span>}
                     {log.type === 'cmd' && <span className="text-[#33ff00] mr-1">$</span>}
-                    <span className={log.type === 'cmd' ? 'font-bold' : ''}>{log.text}</span>
+                    {log.type === 'success' || log.type === 'error' ? (
+                      <TypewriterText text={log.text} />
+                    ) : (
+                      <span className={log.type === 'cmd' ? 'font-bold' : ''} style={{ whiteSpace: 'pre-wrap' }}>{log.text}</span>
+                    )}
                   </div>
                 ))}
                 <div ref={logEndRef} />
